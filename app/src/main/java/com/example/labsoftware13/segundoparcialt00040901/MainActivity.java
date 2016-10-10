@@ -9,9 +9,6 @@ import android.widget.Toast;
 
 import com.loopj.android.http.*;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -214,10 +211,11 @@ public class MainActivity extends AppCompatActivity {
                         Toast toast= Toast.makeText(getApplicationContext(), "Por favor ingresa un numero antes de operar", Toast.LENGTH_SHORT);
                         toast.show();
                     }else{
-                        Log.setText(Resultado.getText()+"\n"+"+");
+                        o = "sum";
+                        Log.setText(Resultado.getText()+"\n"+o);
                         a = Integer.parseInt(Resultado.getText().toString());
                         Resultado.setText("");
-                        o = "sum";
+
                     }
 
                 }
@@ -296,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v){
+
                 if(puls == 0){
                     Toast toast= Toast.makeText(getApplicationContext(), "Por favor ingresa un numero antes de operar", Toast.LENGTH_SHORT);
                     toast.show();
@@ -312,20 +311,26 @@ public class MainActivity extends AppCompatActivity {
                         params.put("b", String.valueOf(b));
 
 
-                        client.post(url, params, new JsonHttpResponseHandler(){
+                        Toast toast= Toast.makeText(getApplicationContext(), "Operando", Toast.LENGTH_SHORT);
+                        toast.show();
+
+
+                        client.post("http://162.243.64.94/dm.php", params, new AsyncHttpResponseHandler(){
                             @Override
-                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                String responseBodyStr = null;
                                 try {
-                                    resul = response.get();
-
-
-                                } catch (JSONException e) {
+                                    responseBodyStr = new String(responseBody, "UTF-8");
+                                    Resultado.setText(responseBodyStr);
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
+
                             @Override
-                            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                                Log.v("Respuesta JSON:", response.toString());
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                Toast toast= Toast.makeText(getApplicationContext(), "Se ha explotado la aplicacion", Toast.LENGTH_SHORT);
+                                toast.show();
                             }
 
 
